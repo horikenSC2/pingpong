@@ -422,7 +422,7 @@
 
     level9(){
       removeActive();
-      lists[9].classList.add('active');
+      lists[8].classList.add('active');
       this.ball.speedUp();  
     }
 
