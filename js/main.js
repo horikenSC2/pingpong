@@ -11,7 +11,7 @@
       "Level6:ボール2個",
       "Level7:Level6＋マスク",
       "Level8:Level7+パドル操作反転",
-      "Level9:Level8+スピードアップ",
+      // "Level9:Level8+スピードアップ",
       // "Level10:Level9+スピードアップ",
     ]
   
@@ -39,8 +39,8 @@
       this.r=10;
       this.x=rand(30,250);
       this.y=10;
-      this.vx=4*(Math.random()<0.5?1:-1);
-      this.vy=3;
+      this.vx=3.8*(Math.random()<0.5?1:-1);
+      this.vy=2.8;
       this.isMissed=false;
     }
 
@@ -420,11 +420,11 @@
     //   this.paddle.goUp();      
     // }
 
-    level9(){
-      removeActive();
-      lists[8].classList.add('active');
-      this.ball.speedUp();  
-    }
+    // level9(){
+    //   removeActive();
+    //   lists[8].classList.add('active');
+    //   this.ball.speedUp();  
+    // }
 
     checkLevelUp(){
       switch(this.game.getScore()){
@@ -452,13 +452,13 @@
         case this.levelUpCount*10:
           this.level8()
         break;
-        case this.levelUpCount*12:
-          this.level9();
-        break;
+        // case this.levelUpCount*12:
+        //   this.level9();
+        // break;
         // case this.levelUpCount*14:
         //   this.level10();
         // break;
-        case this.levelUpCount*14:
+        case this.levelUpCount*12:
           this.game.switchGameCleared();
         break;
       }
