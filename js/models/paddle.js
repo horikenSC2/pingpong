@@ -1,6 +1,5 @@
 export class Paddle {
-    constructor(canvas, game) {
-        this.game = game;
+    constructor(canvas) {
         this.canvas = canvas;
         this.ctx = this.canvas.getContext('2d');
         this.w = 60;
@@ -18,25 +17,7 @@ export class Paddle {
         });
     }
 
-    update(ball) {
-        const paddleTop = this.y;
-        const paddleLeft = this.x;
-        const paddleRight = this.x + this.w;
-        const paddleBottom = this.y + this.h;
-        const ballTop = ball.getY() - ball.getR();
-        const ballBottom = ball.getY() + ball.getR();
-        const ballCenter = ball.getX();
-
-        if (
-            paddleTop < ballBottom &&
-            paddleBottom > ballTop &&
-            paddleLeft < ballCenter &&
-            ballCenter < paddleRight) {
-            ball.pushUp(paddleTop);
-            ball.bounce();
-            this.game.addScore();
-        }
-
+    next() {
         const rect = this.canvas.getBoundingClientRect();
         if (this.isReversed) {
             this.x = this.canvas.width - (this.mouseX - rect.left - this.w / 2);
@@ -49,6 +30,15 @@ export class Paddle {
         if (this.x > this.canvas.width - this.w) {
             this.x = this.canvas.width - this.w;
         }
+    }
+
+    current() {
+        return {
+            x: this.x,
+            y: this.y,
+            w: this.w,
+            h: this.h,
+        };
     }
 
     draw() {

@@ -1,16 +1,15 @@
 export class Ball {
     constructor(canvas) {
         this.canvas = canvas;
-        this.ctx = this.canvas.getContext('2d');
         this.r = 10;
         this.x = this.rand(30, 250);
         this.y = 10;
         this.vx = 4 * (Math.random() < 0.5 ? 1 : -1);
         this.vy = 3;
-        this.isMissed = false;
     }
 
-    update() {
+    next() {
+        let isMissed = false;
         this.x += this.vx;
         this.y += this.vy;
 
@@ -20,17 +19,15 @@ export class Ball {
         if (this.y < this.r) {
             this.vy *= -1;
         }
-
-        if (this.y - this.r > this.canvas.height) {
-            this.isMissed = true;
-        }
     }
 
-    draw() {
-        this.ctx.beginPath();
-        this.ctx.fillStyle = 'orange';
-        this.ctx.arc(this.x, this.y, this.r, 0, 2 * Math.PI);
-        this.ctx.fill();
+    current() {
+        return {
+            x: this.x,
+            y: this.y,
+            r: this.r,
+            isMissed: (this.y - this.r > this.canvas.height),
+        };
     }
 
     bounce() {
@@ -65,9 +62,5 @@ export class Ball {
 
     getR() {
         return this.r;
-    }
-
-    getIsMissed() {
-        return this.isMissed;
     }
 }
