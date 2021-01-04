@@ -1,6 +1,5 @@
 import { Paddle } from './paddle.js';
 import { Ball } from './ball.js';
-import { Level } from './level.js';
 import { Stage } from './stage.js';
 
 export class Game {
@@ -11,14 +10,13 @@ export class Game {
         this.isGameCleared = true;
         this.score = 0;
 
-        this.isMasked = false;
-        this.isDoubled = false;
-
-        this.balls = [new Ball(canvas)];
-        this.paddle = new Paddle(canvas, this);
-        this.level = new Level(this, this.ball, this.paddle);
-
         this.stages = stages;
+        this.currentStageIndex = 0;
+        this.stage = this.stages[this.currentStageIndex];
+
+        this.balls = this.stage.balls;
+        this.paddle = this.stage.paddle;
+        this.isMasked = this.stage.isMasked;
 
         this.drawOpening();
     }
@@ -26,7 +24,25 @@ export class Game {
     start() {
         this.isGameover = false;
         this.isGameCleared = false;
+        document.querySelectorAll('ul li')[this.currentStageIndex].classList.add('active');
+
         this.loop();
+    }
+
+    setLevelList() {
+        const ul = document.querySelector('ul');
+
+        this.stages.forEach(stage => {
+            const li = document.createElement('li');
+            li.textContent = stage.label;
+            ul.appendChild(li);
+        });
+    }
+
+    removeActive() {
+        document.querySelectorAll('ul li').forEach(list => {
+            list.classList.remove('active');
+        });
     }
 
     loop() {
@@ -55,7 +71,7 @@ export class Game {
             const ballBottom = b.y + b.r;
             const ballCenter = b.x;
             let isBounced = false;
-    
+
             if (
                 paddleTop < ballBottom &&
                 paddleBottom > ballTop &&
@@ -117,8 +133,23 @@ export class Game {
     }
 
     addScore() {
-        this.score++;
-        this.level.checkLevelUp();
+        const required = this.stages
+            .slice(0, this.currentStageIndex + 1)
+            .reduce((sum, s) => sum + s.score, 0);
+
+        if (++this.score >= required) {
+            this.currentStageIndex++;
+            this.removeActive();
+            if (this.stages.length === this.currentStageIndex) {
+                this.switchGameCleared();
+                return;
+            }
+
+            document.querySelectorAll('ul li')[this.currentStageIndex].classList.add('active');
+            this.stage = this.stages[this.currentStageIndex];
+            this.balls = this.stage.balls;
+            this.paddle = this.stage.paddle;
+        }
     }
 
     getScore() {
@@ -173,15 +204,11 @@ export class Game {
         this.isMasked = !this.isMasked;
     }
 
-    switchDoubled() {
-        this.isDoubled = !this.isDoubled;
-    }
-
     switchGameCleared() {
         this.isGameCleared = !this.isGameCleared;
     }
 
     isEnded() {
-        return this.isGameover === true || this.isGameover === true;
+        return this.isGameover === true || this.isGameCleared === true;
     }
 }

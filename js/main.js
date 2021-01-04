@@ -1,51 +1,50 @@
 'use strict';
-import { config } from './const.js';
 import { Game } from './models/game.js';
+import { Ball } from './models/ball.js';
+import { Paddle } from './models/paddle.js';
+import { Stage } from './models/stage.js';
 
 {
   const canvas = document.querySelector('canvas');
+  createModal();
 
-  let game = new Game(canvas);
-  setLevelList();
-  const lists = document.querySelectorAll('ul li');
+  const stages = [
+    new Stage()
+      .setLabel('Level1: パドル狭＆上昇')
+      .setBalls([new Ball(canvas), new Ball(canvas)])
+      .setPaddle(new Paddle(canvas, { w: 200, isReversed: true }))
+      .setScore(2),
+    new Stage()
+      .setLabel("Level2: Level1＋スピードアップ")
+      .setBalls([new Ball(canvas)])
+      .setPaddle(new Paddle(canvas, { w: 120 }))
+      .setScore(4),
+  ];
+
+  let game = new Game(canvas, stages.map(s => s.clone()));
+  game.setLevelList();
 
   canvas.addEventListener('click', () => {
     if (game.isEnded()) {
-      removeActive();
-      game = new Game(canvas);
+      game = new Game(canvas, stages.map(s => s.clone()));
       game.start();
     }
   });
 
-  const modal = document.getElementById('modal');
-  setTimeout(() => {
-    modal.classList.remove('hidden');
-  }, 50)
+  function createModal() {
+    const modal = document.getElementById('modal');
+    setTimeout(() => {
+      modal.classList.remove('hidden');
+    }, 50)
 
-  const button = document.getElementById('button');
+    const button = document.getElementById('button');
 
-  button.addEventListener('click', () => {
-    modal.classList.add('hidden');
-  });
-
-  document.addEventListener('click', () => {
-    button.click();
-  });
-
-  function setLevelList() {
-    const ul = document.querySelector('ul');
-    const listTexts = config.levelList;
-
-    listTexts.forEach(l => {
-      const li = document.createElement('li');
-      li.textContent = l.label;
-      ul.appendChild(li);
+    button.addEventListener('click', () => {
+      modal.classList.add('hidden');
     });
-  }
 
-  function removeActive() {
-    lists.forEach(list => {
-      list.classList.remove('active');
-    })
+    document.addEventListener('click', () => {
+      button.click();
+    });
   }
 }
